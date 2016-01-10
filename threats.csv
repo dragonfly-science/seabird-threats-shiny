@@ -1,0 +1,65 @@
+threat_id,Threat class,Subcategory
+1,Fishing - Direct NZ commercial,Trawl
+2,Fishing - Direct NZ commercial,Surface Longline
+3,Fishing - Direct NZ commercial,Bottom Longline
+4,Fishing - Direct NZ commercial,Gillnet
+5,Fishing - Direct NZ commercial,Other
+6,Fishing - Direct NZ recreational/other,Line
+7,Fishing - Direct NZ recreational/other,Setnet
+8,Fishing - Direct NZ recreational/other,Other
+9,Fishing - Direct international,
+9,Fishing - Direct international,
+10,Fishing - Indirect,
+11,Mining and oil activities,Pollution
+11,Mining and oil activities,Pollution
+12,Mining and oil activities,Habitat degradation
+13,Mining and oil activities,Other
+14,Climate change,Temperature
+15,Climate change,Sea level rise
+16,Climate change,Prey availability/foraging displacement
+16,Climate change,Prey availability/foraging displacement
+16,Climate change,Prey availability/foraging displacement
+17,Climate change,Other
+18,Human impacts at nest site,Vehicle
+19,Human impacts at nest site,Noise/disturbance
+20,Human impacts at nest site,Deliberate harassment
+21,Human impacts at nest site,Costal development
+22,Human impacts at nest site,Farming - stock
+23,Human impacts at nest site,Research
+23,Human impacts at nest site,Research
+24,Human impacts at nest site,Other
+25,Cultural harvesting,
+26,Pollution,Marine debris/entanglements
+26,Pollution,Marine debris/entanglements
+27,Pollution,Plastics
+28,Pollution,Agricultural run off
+29,Pollution,Industrial run off
+30,Pollution,Untreated sewage
+31,Pollution,Pesticides/herbicides/fertilizers
+32,Pollution,Other
+33,Introduced animals,Domestic animals
+34,Introduced animals,Introduced pests
+35,Introduced animals,Predation
+36,Introduced animals,Destruction of habitat
+37,Introduced animals,Other
+38,Natural animal threats,Avian
+39,Natural animal threats,Mammal
+40,Natural animal threats,Other
+41,Disease,Avian cholera
+41,Disease,Avian cholera
+42,Disease,Avian pox virus
+43,Disease,Vectors
+44,Disease,Other
+45,Weeds,Direct
+46,Weeds,Indirect
+63,Small population effects,Interspecific breeding
+68,Small population effects,Other
+48,Natural disasters/events,Tsunami
+48,Natural disasters/events,Tsunami
+49,Natural disasters/events,Earthquake
+50,Natural disasters/events,Volcanic eruptions
+51,Natural disasters/events,Fire
+52,Natural disasters/events,Drought
+53,Natural disasters/events,Storms
+54,Natural disasters/events,Marine biotoxins
+55,Natural disasters/events,Other
