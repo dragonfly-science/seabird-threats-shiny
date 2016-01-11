@@ -10,8 +10,6 @@ source('functions.r')
 
 load('shinydata.rdata', verb=T)
 
-## input = list(spp = spp[2], afr_lcl=7, afr_ucl=10, sic_lcl=40, sic_ucl=50, sa_lcl=90, sa_ucl=96, bs_lcl=50, bs_ucl=80, pb_lcl=50, pb_ucl=80, nbp_lcl=5000, nbp_ucl=10000, threat="Fishing - Direct NZ commercial - Trawl", exist_pot='Existing threat', impacted_par='juvenile-coh-survival',impact_ind_n=1000, impact_ind_p=NA)
-## tab <- data.frame('Threat'="Fishing - Direct NZ commercial - Trawl",'Impacted.parameter'="juvenile-coh-survival",'Threat.status'='Existing threat','Individuals'=1000,'Change'=NA,stringsAsFactors=F)
 
 pars <- c('Juvenile cohort survival' = 'juvenile-coh-survival',
          'Adult annual survival'     = 'adult-survival',
@@ -305,8 +303,6 @@ observeEvent(input$addthreat, {
         missing_changes <- which(is.na(tab$Change) &
                                   tab[['Impacted.parameter']] %in% c('adult-survival', 'juvenile-coh-survival'))
         for (i in missing_changes) {
-            ## validate( need( tab[i, 'Impacted.parameter'] %in% c('adult-survival', 'juvenile-survival'),
-            ##                sprintf('Row %i: Do not know how to convert individuals', i)) )
             par <- tab[i, 'Impacted.parameter']
             param <- pars_short[[par]]
             param_n <- rel_pars[[par]]
