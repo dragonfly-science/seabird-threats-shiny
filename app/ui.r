@@ -126,7 +126,7 @@ shinyUI(fluidPage(
     br(),
     wellPanel(
         fluidRow(column(8, 
-                        p('Made by', a('Dragonfly Science', href = 'http://www.dragonfly.co.nz'),
+                        p('Made by', a('Dragonfly Data Science', href = 'http://www.dragonfly.co.nz'),
                           'for the', a('Department of Conservation', href = 'http://www.doc.govt.nz'))
                         ),
                  column(2,
