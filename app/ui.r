@@ -125,16 +125,31 @@ shinyUI(fluidPage(
     ),
     br(),
     wellPanel(
-        fluidRow(column(8, 
-                        p('Made by', a('Dragonfly Data Science', href = 'http://www.dragonfly.co.nz'),
-                          'for the', a('Department of Conservation', href = 'http://www.doc.govt.nz'))
+        fluidRow(column(2, HTML('')),
+                column(3,
+                        HTML('<a href="http://www.doc.govt.nz"><img src="data/Department_of_Conservation_New_Zealand_logo.svg.png" width="200px"></a>')
                         ),
-                 column(2,
+                 column(3,
                         HTML('<a href="http://www.dragonfly.co.nz"><img src="data/logo.png" width="150px"></a>')
                         ),
-                 column(2,
-                        HTML('<a href="http://www.doc.govt.nz"><img src="data/Department_of_Conservation_New_Zealand_logo.svg.png" width="200px"></a>')
+                 column(3,
+                        HTML('<a href="https://creativecommons.org/licenses/by/4.0/"><img src="data/cc.png" /><img src="data/by.png" /></a>')
                         )
-                 )
-    )
+                 ),
+        fluidRow(column(12,
+                        HTML('<p> 
+                                Made for the <a href = "http://www.doc.govt.nz"> Department of Conservation </a>
+                                by <a href = "http://www.dragonfly.co.nz">Dragonfly Data Science</a>.
+                                The text content and code of this website is copyright Department of Conservation, and is
+                                <a href="https://github.com/dragonfly-science/seabird-threats-shiny/blob/master/LICENSE">licensed for reuse</a>.
+                                The photograph of albatross used in the header is copyright Kristina Hoeppner, and is
+                                <a href= "https://www.flickr.com/photos/4nitsirk/16097480266">licensed for reuse</a>.
+                                The source code is available on <a href="https://github.com/dragonfly-science/seabird-threats-shiny">GitHub</a>. 
+                                If you have any problems or suggestions, you are welcome to <a href="https://github.com/dragonfly-science/seabird-threats-shiny/issues">raise an issue</a>.
+                            </p>'
+                          )
+                    )
+                )
+            )
+
 ))
