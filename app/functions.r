@@ -60,13 +60,13 @@ samples_from_n_ci <- function(lcl, ucl, n) {
     z2 <- log(ucl)
     mean <- mean(c(z1, z2))
     sd <- (z2 - mean) / qnorm(0.975)
-    return(as.integer(exp(rnorm(n, mean, sd))))
+    return(as.integer(round(exp(rnorm(n, mean, sd)))))
 }
 
 
 calc_dem <- function(s, eig) {
     if (!is.null(s) & !is.null(eig)) {
-        agedist <- sapply(eig, '[[', 'stable.stage')
+        agedist <- sapply(eig, '[[', 'stable.stage', simplify=F)
         ## aged=agedist[[1]]
         pd <- do.call('rbind', sapply(1:length(agedist), function(i) {
             aged <- agedist[[i]]

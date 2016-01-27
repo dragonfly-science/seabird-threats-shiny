@@ -5,8 +5,9 @@ library(RColorBrewer)
 library(popbio)
 library(shinyTable)
 library(DT)
-
-source('functions.r')
+library(compiler)
+loadcmp('functions.Rc')
+## source('functions.r')
 
 load('shinydata.rdata', verb=T)
 
@@ -65,8 +66,6 @@ labs <- c(si       = 'Immature annual survival (%)',
          new_juv  = 'New immatures')
          
   
-nsamples <- 1000
-
 nulldf <- data.frame('species'            = character(0),
                     'Threat'             = character(0),
                     'Impacted.parameter' = character(0),
@@ -74,7 +73,24 @@ nulldf <- data.frame('species'            = character(0),
                     'Individuals'        = numeric(0),
                     'Change'             = numeric(0), stringsAsFactors = F)
 
-## Define server logic
+
+## ###################
+## ## For debugging ##
+## ###################
+## input <- list(spp     = spp[1],
+##              afr_lcl = 5     , afr_ucl = 5,
+##              sic_lcl = 30    , sic_ucl = 30,
+##              sa_lcl  = 95    , sa_ucl  = 95,
+##              bs_lcl  = 65    , bs_ucl  = 65,
+##              pb_lcl  = 70    , pb_ucl  = 70,
+##              nbp_lcl = 15000 , nbp_ucl = 15000,
+##              threat = NULL, impacted_par = NULL, exist_pot = NULL,
+##              impact_ind_n = NULL, impact_ind_p = NULL)
+
+
+############################
+## ## Define server logic ##
+############################
 shinyServer(function(input, output, session) {
 
     rv <- reactiveValues(cachedTbl = nulldf, start = TRUE, gli = 0, oriDem = 0, oriThreat = 0)
@@ -190,12 +206,12 @@ all_dem_good <- reactive({
 
 samples <- reactive({
     if (all_dem_good()) {
-        s <- list(afr = samples_from_n_ci(input$afr_lcl, input$afr_ucl, nsamples),
-                 sic  = samples_from_p_ci(input$sic_lcl/100, input$sic_ucl/100, nsamples),
-                 sa   = samples_from_p_ci(input$sa_lcl/100, input$sa_ucl/100, nsamples),
-                 bs   = samples_from_p_ci(input$bs_lcl/100, input$bs_ucl/100, nsamples),
-                 pb   = samples_from_p_ci(input$pb_lcl/100, input$pb_ucl/100, nsamples),
-                 nbp  = samples_from_n_ci(input$nbp_lcl, input$nbp_ucl, nsamples))
+        s <- list(afr = samples_from_n_ci(input$afr_lcl, input$afr_ucl, input$nsamples),
+                 sic  = samples_from_p_ci(input$sic_lcl/100, input$sic_ucl/100, input$nsamples),
+                 sa   = samples_from_p_ci(input$sa_lcl/100, input$sa_ucl/100, input$nsamples),
+                 bs   = samples_from_p_ci(input$bs_lcl/100, input$bs_ucl/100, input$nsamples),
+                 pb   = samples_from_p_ci(input$pb_lcl/100, input$pb_ucl/100, input$nsamples),
+                 nbp  = samples_from_n_ci(input$nbp_lcl, input$nbp_ucl, input$nsamples))
         meanafr <- mean(s$afr)
         s$si <- s$sic^(1/(meanafr - 1))
         return(s)
@@ -414,6 +430,23 @@ output$threat_table <- DT::renderDataTable({
 ## Demography ##
 ################
 
+eigen <- reactive({
+    s <- samples()
+    eig <- NULL
+    if (length(s))
+        eig <- eigens(s)
+    return(eig)
+})
+
+popdist <- reactive({
+    eig <- eigen()
+    if (!is.null(eig)) {
+        s <- samples()
+        pd <- calc_dem(s, eig)
+        return(pd)
+    }
+})
+
 
 summary_fun <- function(spd) {
     if (!is.null(spd)) {
@@ -467,22 +500,6 @@ output$all_dem_summary <- DT::renderDataTable({
     }
 })
 
-eigen <- reactive({
-    s <- samples()
-    eig <- NULL
-    if (length(s))
-        eig <- eigens(s)
-    return(eig)
-})
-
-popdist <- reactive({
-    eig <- eigen()
-    if (!is.null(eig)) {
-        s <- samples()
-        pd <- calc_dem(s, eig)
-        return(pd)
-    }
-})
 
 
 #######################
@@ -516,14 +533,14 @@ output$plot_lambdas <- renderPlot({
     if (!is.null(pd)) {
         pd2 <- upd_popdist()
         d <- 100 * (pd$grate - 1)
-        dens <- density(d)
+        dens <- density(d, from = min(d), to = max(d))
         x <- dens$x
         lcl <- rep(0, length(x))
         ucl <- dens$y
         
         if ( !is.null(pd2) )  {
             d2 <- 100 * (pd2$grate - 1)
-            dens2 <- density(d2)
+            dens2 <- density(d2, from = min(d2), to = max(d2))
             x2 <- dens2$x
             lcl2 <- rep(0, length(x2))
             ucl2 <- dens2$y

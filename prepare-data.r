@@ -1,8 +1,19 @@
 options(scipen=10)
 
+args <- commandArgs(trailingOnly = T)
+if (!length(args))
+    app <- 'app'  else app <- args[1]
+
+#################################
+## Read demographic parameters ##
+#################################
+
 r1summ <- read.csv('delphi-round2-derived-parameters.csv', as.is=T)
 
-## Update to get the juvenile cohort survival
+################################################
+## Update to get the juvenile cohort survival ##
+################################################
+
 js <- subset(r1summ, par == 'juvenile-survival')
 jcs <- js
 jcs$par <- 'juvenile-coh-survival'
@@ -25,6 +36,10 @@ r1summ <- rbind(r1summ, jcs)
 pars <- unique(r1summ$par)
 spp <- unique(r1summ$sp)
 
+#################
+## Threat list ##
+#################
+
 threats <- unique(read.csv('threats.csv', as.is=T))
 rownames(threats) <- NULL
 threats <- threats[order(threats$threat_id),]
@@ -33,7 +48,7 @@ threats <- ifelse(threats$Subcategory != '',
                  threats$Threat.class)
 
 
-save(spp, pars, threats, r1summ, file='app/shinydata.rdata')
+save(spp, pars, threats, r1summ, file=sprintf('%s/shinydata.rdata', app))
 
 
 

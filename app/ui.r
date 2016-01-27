@@ -72,7 +72,12 @@ shinyUI(fluidPage(
         class="step",
         column(3, 
                tags$h2(tags$span(class="badge", 2), "Parameters"),
-               tags$p("From the life-history parameters, the annual growth rate, annual mortalities, and other characteristics of the population are calculated. The calculations use a simple, deterministic matrix population model. The uncertainty is estimated by drawing samples from the distributions of the life-history parameters.")
+               tags$p("From the life-history parameters, the annual growth rate, annual mortalities, and other characteristics of the population are calculated. The calculations use a simple, deterministic matrix population model. The uncertainty is estimated by drawing samples from the distributions of the life-history parameters. The mean and 95% quantile interval are shown for each derived parameter."),
+               fluidRow(
+                   column(3, h6('No. samples')),
+                   column(9, numericInput("nsamples", 
+                            label = NULL,
+                            value = 1000, min = 100, max = 1e6, step = 100, width = '50%')))
                ),
         column(3, 
                align = 'top',
