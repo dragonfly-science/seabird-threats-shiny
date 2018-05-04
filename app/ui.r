@@ -46,7 +46,10 @@ shinyUI(fluidPage(
                div(class = 'row2',
                    column(4, h6('Adult annual survival (%)')),
                    column(4, uiOutput('sa_lcl')),
-                   column(4, uiOutput('sa_ucl')))
+                   column(4, uiOutput('sa_ucl'))),
+               div(class = 'row2',
+                   column(4, h6('Clutch size (eggs)')),
+                   column(4, uiOutput('cs')))
                ),
         column(4, 
                div(class = 'row2',

@@ -18,7 +18,7 @@ eigens <- function(s) {
     if (length(s)) {
         nsamples <- length(s[[1]])
         z <- sapply(1:nsamples, function(i) {
-            mat <- les_mat( s$afr[i], s$sa[i], s$si[i], s$pb[i], 1, s$bs[i])
+            mat <- les_mat( s$afr[i], s$sa[i], s$si[i], s$pb[i], s$cs[i], s$bs[i])
             eig <- eigen.analysis(mat)
             eig$sensitivities <- eig$elasticities <- eig$repro.value <- NULL
             return(eig)
@@ -68,7 +68,7 @@ calc_dem <- function(s, eig) {
     if (!is.null(s) & !is.null(eig)) {
         agedist <- sapply(eig, '[[', 'stable.stage', simplify=F)
         ## aged=agedist[[1]]
-        pd <- do.call('rbind', sapply(1:length(agedist), function(i) {
+        pd <- rbindlist(lapply(seq_along(agedist), function(i) {
             aged <- agedist[[i]]
             a <- s$afr[i]
             pad <- aged[a]
@@ -76,12 +76,12 @@ calc_dem <- function(s, eig) {
             ntot <- nad / pad
             ni <- ntot * (1-pad)
             nnow <- ntot * aged
-            mat <- les_mat( s$afr[i], s$sa[i], s$si[i], s$pb[i], 1, s$bs[i])
+            mat <- les_mat( s$afr[i], s$sa[i], s$si[i], s$pb[i], s$cs[i], s$bs[i])
             dead_ad <- (1 - s$sa[i]) * nad
             dead_juv <- (1- s$si[i]) * ni
-            data.frame(ni = ni, nad = nad, ntot = ntot, grate = eig[[i]]$lambda1,
+            data.table(ni = ni, nad = nad, ntot = ntot, grate = eig[[i]]$lambda1,
                        dead_ad = dead_ad, dead_juv = dead_juv)
-        }, simplify=F))
+        }))
         pd <- cbind(do.call('cbind', s), pd)
         return(pd)
     }
