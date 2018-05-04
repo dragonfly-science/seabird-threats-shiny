@@ -5,24 +5,24 @@ ilogit <- function(x) exp(x)/(1+exp(x))
 les_mat <- function(afr, sa, si, pb, cs, bs) {
     ## if (!is.finite(afr))  print(afr)
     m <- diag(0, afr, afr)
-    for (i in 1:(afr-1)) {
-	m[i,i] <- 0
-	m[i+1,i] <- si
+    for (i in seq_len(afr-1L)) {
+	m[i+1L,i] <- si
     }
-    m[1,ncol(m)] <- pb * cs * bs / 2
+    m[1L,ncol(m)] <- pb * cs * bs / 2
     m[nrow(m), ncol(m)] <- sa
     return(m)
 }
 
 eigens <- function(s) {
+    library(parallel)
     if (length(s)) {
         nsamples <- length(s[[1]])
-        z <- sapply(1:nsamples, function(i) {
-            mat <- les_mat( s$afr[i], s$sa[i], s$si[i], s$pb[i], s$cs[i], s$bs[i])
-            eig <- eigen.analysis(mat)
+        mat <- mapply(les_mat, s$afr, s$sa, s$si, s$pb, s$cs, s$bs)
+        mclapply(mat, function(m) {
+            eig <- eigen.analysis(m)
             eig$sensitivities <- eig$elasticities <- eig$repro.value <- NULL
             return(eig)
-        }, simplify=F)
+        }, mc.cores=7)            
     }
 }
 
@@ -66,23 +66,20 @@ samples_from_n_ci <- function(lcl, ucl, n) {
 
 calc_dem <- function(s, eig) {
     if (!is.null(s) & !is.null(eig)) {
-        agedist <- sapply(eig, '[[', 'stable.stage', simplify=F)
-        ## aged=agedist[[1]]
-        pd <- rbindlist(lapply(seq_along(agedist), function(i) {
-            aged <- agedist[[i]]
+        pd <- rbindlist(mclapply(seq_along(eig), function(i) {
+            aged <- eig[[i]]$stable.stage
             a <- s$afr[i]
             pad <- aged[a]
             nad <- s$nbp[i] * 2 / (s$pb[i])
             ntot <- nad / pad
             ni <- ntot * (1-pad)
-            nnow <- ntot * aged
-            mat <- les_mat( s$afr[i], s$sa[i], s$si[i], s$pb[i], s$cs[i], s$bs[i])
             dead_ad <- (1 - s$sa[i]) * nad
             dead_juv <- (1- s$si[i]) * ni
             data.table(ni = ni, nad = nad, ntot = ntot, grate = eig[[i]]$lambda1,
                        dead_ad = dead_ad, dead_juv = dead_juv)
-        }))
-        pd <- cbind(do.call('cbind', s), pd)
+            
+        }, mc.cores=7))
+        pd <- cbind(as.data.table(s), pd)
         return(pd)
     }
 }

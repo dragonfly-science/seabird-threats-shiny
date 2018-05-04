@@ -86,7 +86,8 @@ shinyUI(fluidPage(
                align = 'top',
                plotOutput("plot_lambdas", width='80%', height='250px'),
                tags$p("Distribution of the population growth rate. The vertical line indicates the mean value. Grey indicates
-                the base case, and red indicates the threat scenario.")
+                the base case, and red indicates the threat scenario."),
+               checkboxInput('fix_x_axis', 'Fix x-axis range', value=F)
                ),
         column(6, 
                align = 'top',

@@ -101,7 +101,8 @@ nulldf <- data.frame('species'            = character(0),
 ##########################
 shinyServer(function(input, output, session) {
 
-    rv <- reactiveValues(cachedTbl = nulldf, start = TRUE, gli = 0, oriDem = 0, oriThreat = 0)
+    rv <- reactiveValues(cachedTbl = nulldf, start = TRUE, gli = 0, oriDem = 0, oriThreat = 0,
+                        fixed.x.axis = F, xrng = NULL)
 
     ## UI elements
     output$spp <- renderUI({
@@ -544,7 +545,20 @@ shinyServer(function(input, output, session) {
 ###########################
 ### Plot of growth rates ##
 ###########################
-
+    observeEvent(input$fix_x_axis, {
+        if (!is.null(input$fix_x_axis)) {
+            if (input$fix_x_axis == T) {
+                rv$fixed.x.axis <- T
+                pd <- isolate(popdist())
+                pd2 <- isolate(upd_popdist())
+                rv$xrng <- range(100 * (c(pd$grate, pd2$grate) - 1))
+            } else {
+                rv$fixed.x.axis <- F
+                rv$xrng <- NULL
+            }
+        }
+    })
+    
     output$plot_lambdas <- renderPlot({
         pd <- popdist()
         if (!is.null(pd)) {
@@ -564,9 +578,14 @@ shinyServer(function(input, output, session) {
 
                 maxy <- max(c(dens$y, dens2$y))
                 maxx <- max(c(dens$x, dens2$x))
+                if (rv$fixed.x.axis == T & !is.null(rv$xrng)) {
+                    xlims <- rv$xrng
+                } else {
+                    xlims <- range(c(dens$x, dens2$x))
+                }
                 par(mar=c(4, 0.5, 0.5, 0.5), mgp=c(2,.5,0), col.axis='#00000088', col.lab='#00000088')
                 plot(NA,
-                     xlim = range(c(dens$x, dens2$x)),
+                     xlim = xlims,
                      ylim = c(0, maxy*1.11), xlab='Annual growth rate (%)', main='',
                      xaxs = 'i', yaxs = 'i', bty='n', ylab='', las = 1, yaxt='n', xaxt='n')
                 axis(1, at=pretty(c(x, x2), 10), col='#00000088')
@@ -580,10 +599,14 @@ shinyServer(function(input, output, session) {
                 abline(v = mean(d2), col='red')
 
             } else {
-
+                if (rv$fixed.x.axis == T & !is.null(rv$xrng)) {
+                    xlims <- rv$xrng
+                } else {
+                    xlims <- range(dens$x)
+                }
                 par(mar=c(4, 0.5, 0.5, 0.5), mgp=c(2,.5,0), col.axis='#00000088', col.lab='#00000088')
                 plot(NA,
-                     xlim = range(dens$x),
+                     xlim = xlims,
                      ylim = c(0, max(dens$y)*1.02), xlab='Annual growth rate (%)', main='',
                      xaxs = 'i', yaxs = 'i', bty='n', ylab='', las = 1, yaxt='n', xaxt='n')
                 axis(1, at=pretty(x, 10), col='#00000088')
