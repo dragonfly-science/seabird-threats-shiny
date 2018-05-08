@@ -27,8 +27,7 @@ shinyUI(fluidPage(
         class="step",
         column(3, 
                tags$h2(tags$span(class="badge", 1), "Base case"),
-               tags$p("Set the life-history parameters, by specifying the 95% quantile interval of the distribution of each parameter. As a starting position, you may select a species from the drop-down list."),
-               tags$div( uiOutput('spp', inline=T))
+               tags$p("Set the life-history parameters, by specifying the 95% quantile interval of the distribution of each parameter.")
                ),
         column(4, 
                div(class = 'row2',

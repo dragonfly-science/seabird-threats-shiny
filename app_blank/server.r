@@ -73,8 +73,7 @@ labs <- c(si       = 'Immature annual survival (%)',
          cs       = 'Clutch size (eggs)')
          
   
-nulldf <- data.frame('species'            = character(0),
-                    'Threat'             = character(0),
+nulldf <- data.frame('Threat'             = character(0),
                     'Impacted.parameter' = character(0),
                     'Threat.status'  = character(0),
                     'Individuals'        = numeric(0),
@@ -91,7 +90,7 @@ nulldf <- data.frame('species'            = character(0),
 ##              bs_lcl  = 60    , bs_ucl  = 75,
 ##              pb_lcl  = 60    , pb_ucl  = 75,
 ##              nbp_lcl = 10000 , nbp_ucl = 15000,
-##              cs = 1,
+##              cs_min = 1, cs_max = 2,
 ##              threat = "Fishing - Direct NZ commercial - Trawl", impacted_par = 'adult-survival', exist_pot = "Existing threat",
 ##              impact_ind_n = NA, impact_ind_p = 0.1, nsamples = 1000)
 
@@ -104,12 +103,12 @@ shinyServer(function(input, output, session) {
     rv <- reactiveValues(cachedTbl = nulldf, start = TRUE, gli = 0, oriDem = 0, oriThreat = 0,
                         fixed.x.axis = F, xrng = NULL)
 
-    ## UI elements
-    output$spp <- renderUI({
-        selectInput("spp", label = 'Reset parameters',
-                    choices = spp,
-                    selected = spp[1], selectize = F)
-    })
+    ## ## UI elements
+    ## output$spp <- renderUI({
+    ##     selectInput("spp", label = 'Reset parameters',
+    ##                 choices = spp,
+    ##                 selected = spp[1], selectize = F)
+    ## })
 
 
 #############################
@@ -119,92 +118,78 @@ shinyServer(function(input, output, session) {
     output$afr_lcl <- renderUI({
         numericInput("afr_lcl", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='first-breeding-age')$lcl)),
+                     value = 7,
                      step = 0.5)})
     output$afr_ucl <- renderUI({
         numericInput("afr_ucl", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='first-breeding-age')$ucl)),
+                     value = 10,
                      step = 0.5)})
 
     output$sic_lcl <- renderUI({
         numericInput("sic_lcl", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='juvenile-coh-survival')$lcl)),
+                     value = 20,
                      step = 0.5)})
     output$sic_ucl <- renderUI({
         numericInput("sic_ucl", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='juvenile-coh-survival')$ucl)),
+                     value = 40,
                      step = 0.5)})
 
     output$sa_lcl <- renderUI({
         numericInput("sa_lcl", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='adult-survival')$lcl)),
+                     value = 94,
                      step = 0.5)})
     output$sa_ucl <- renderUI({
         numericInput("sa_ucl", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='adult-survival')$ucl)),
+                     value = 96,
                      step = 0.5)})
 
     output$bs_lcl <- renderUI({
         numericInput("bs_lcl", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='breeding-success')$lcl)),
+                     value = 40,
                      step = 0.5)})
     output$bs_ucl <- renderUI({
         numericInput("bs_ucl", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='breeding-success')$ucl)),
+                     value = 60,
                      step = 0.5)})
 
     output$pb_lcl <- renderUI({
         numericInput("pb_lcl", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='breeding-probability')$lcl)),
+                     value = 50,
                      step = 0.5)})
     output$pb_ucl <- renderUI({
         numericInput("pb_ucl", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='breeding-probability')$ucl)),
+                     value = 75,
                      step = 0.5)})
 
     output$nbp_lcl <- renderUI({
         numericInput("nbp_lcl", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='breeding-pairs')$lcl)),
+                     value = 10000,
                      step = 10)})
     output$nbp_ucl <- renderUI({
         numericInput("nbp_ucl", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='breeding-pairs')$ucl)),
+                     value = 20000,
                      step = 10)})
 
     output$cs_min <- renderUI({
         numericInput("cs_min", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='clutch-size')$lcl)),
+                     value = 1L,
                      step = 1L)})
     output$cs_max <- renderUI({
         numericInput("cs_max", 
                      label = NULL,
-                     value = ifelse(is.null(r1summ), NULL,
-                                    round(subset(r1summ, sp==input$spp & par=='clutch-size')$ucl)),
+                     value = 1L,
                      step = 1L)})
 
     
@@ -332,8 +317,7 @@ shinyServer(function(input, output, session) {
                 }
             } else {
                 tab <- rbind(tab,
-                            data.table('species'            = input$spp,
-                                       'Threat'             = input$threat,
+                            data.table('Threat'             = input$threat,
                                        'Impacted.parameter' = input$impacted_par,
                                        'Threat.status'      = input$exist_pot,
                                        'Individuals'        = input$impact_ind_n,
@@ -419,9 +403,8 @@ shinyServer(function(input, output, session) {
 
     harvest_threats <- function() {
         tbl <- rv$cachedTbl
-        if (!is.null(tbl) & nrow(tbl) >0 & !is.null(input$spp)) {
-            tbl$species <- input$spp
-            tbl <- tbl[, c('species', 'Threat', 'Impacted.parameter', 'Threat.status', 'Change', 'Individuals')]
+        if (!is.null(tbl) & nrow(tbl) > 0) {
+            tbl <- tbl[, c('Threat', 'Impacted.parameter', 'Threat.status', 'Change', 'Individuals')]
         }
         return(tbl)
     }

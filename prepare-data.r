@@ -33,8 +33,16 @@ for (i in which(is.na(jcs$mean))){
 
 r1summ <- rbind(r1summ, jcs)
 
-pars <- unique(r1summ$par)
 spp <- unique(r1summ$sp)
+
+################################################
+## Clutch size
+################################################
+
+cs <- data.table(sp = spp, par = 'clutch-size', mean=1, median=1, lcl=1, ucl=1)
+r1summ <- rbind(r1summ, cs)
+
+pars <- unique(r1summ$par)
 
 #################
 ## Threat list ##
